@@ -1,0 +1,32 @@
+version: '3'
+
+
+services:
+  
+  mysql_db:
+    platform: linux/x86_64
+    image: percona
+    environment:   # Set up mysql database name and password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - app-tier
+
+  python_app:
+    platform: linux/x86_64
+    build:
+      context: .
+      dockerfile: conda/Dockerfile
+    depends_on:
+      - mysql_db
+    networks:
+      - app-tier
+    command:
+      tail -f /dev/null
+
+
+networks:
+  app-tier:
+    driver: bridge
